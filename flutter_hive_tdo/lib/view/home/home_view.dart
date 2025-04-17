@@ -129,12 +129,12 @@ class _HomeViewState extends State<HomeView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(MyString.mainTitle, style: textTheme.headline1),
+                    Text(MyString.mainTitle, style: textTheme.displayLarge),
                     const SizedBox(
                       height: 3,
                     ),
                     Text("${checkDoneTask(tasks)} of ${tasks.length} task",
-                        style: textTheme.subtitle1),
+                        style: textTheme.titleMedium),
                   ],
                 )
               ],
@@ -163,9 +163,9 @@ class _HomeViewState extends State<HomeView> {
 
                       return Dismissible(
                         direction: DismissDirection.horizontal,
-                        background: Row(
+                        background: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             Icon(
                               Icons.delete_outline,
                               color: Colors.grey,
@@ -262,8 +262,8 @@ class MySlider extends StatelessWidget {
           const SizedBox(
             height: 8,
           ),
-          Text("AmirHossein Bayat", style: textTheme.headline2),
-          Text("junior flutter dev", style: textTheme.headline3),
+          Text("AmirHossein Bayat", style: textTheme.displayMedium),
+          Text("junior flutter dev", style: textTheme.displaySmall),
           Container(
             margin: const EdgeInsets.symmetric(
               vertical: 30,
@@ -303,101 +303,111 @@ class MySlider extends StatelessWidget {
 }
 
 /// My App Bar
-class MyAppBar extends StatefulWidget with PreferredSizeWidget {
-  MyAppBar({Key? key, 
-    required this.drawerKey,
-  }) : super(key: key);
-  GlobalKey<SliderDrawerState> drawerKey;
+class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final GlobalKey<SliderDrawerState>? drawerKey; // Keep this as SliderDrawerState
 
   @override
-  State<MyAppBar> createState() => _MyAppBarState();
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
-  @override
-  Size get preferredSize => const Size.fromHeight(100);
-}
-
-class _MyAppBarState extends State<MyAppBar>
-    with SingleTickerProviderStateMixin {
-  late AnimationController controller;
-  bool isDrawerOpen = false;
-
-  @override
-  void initState() {
-    super.initState();
-
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    );
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
-  /// toggle for drawer and icon aniamtion
-  void toggle() {
-    setState(() {
-      isDrawerOpen = !isDrawerOpen;
-      if (isDrawerOpen) {
-        controller.forward();
-        widget.drawerKey.currentState!.openSlider();
-      } else {
-        controller.reverse();
-        widget.drawerKey.currentState!.closeSlider();
-      }
-    });
-  }
+  const MyAppBar({Key? key, this.drawerKey}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var base = BaseWidget.of(context).dataStore.box;
-    return SizedBox(
-      width: double.infinity,
-      height: 132,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            /// Animated Icon - Menu & Close
-            Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: IconButton(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  icon: AnimatedIcon(
-                    icon: AnimatedIcons.menu_close,
-                    progress: controller,
-                    size: 40,
-                  ),
-                  onPressed: toggle),
-            ),
-
-            /// Delete Icon
-            Padding(
-              padding: const EdgeInsets.only(right: 20),
-              child: GestureDetector(
-                onTap: () {
-                  base.isEmpty
-                      ? warningNoTask(context)
-                      : deleteAllTask(context);
-                },
-                child: const Icon(
-                  CupertinoIcons.trash,
-                  size: 40,
-                ),
-              ),
-            ),
-          ],
-        ),
+    return AppBar(
+      title: const Text("My AppBar"),
+      leading: IconButton(
+        icon: const Icon(Icons.menu),
+        onPressed: () {
+          drawerKey?.currentState?.openSlider(); // Ensure this matches SliderDrawerState
+        },
       ),
     );
   }
 }
+
+// class _MyAppBarState extends State<MyAppBar>
+//     with SingleTickerProviderStateMixin {
+//   late AnimationController controller;
+//   bool isDrawerOpen = false;
+
+//   @override
+//   void initState() {
+//     super.initState();
+
+//     controller = AnimationController(
+//       vsync: this,
+//       duration: const Duration(milliseconds: 1000),
+//     );
+//   }
+
+//   @override
+//   void dispose() {
+//     controller.dispose();
+//     super.dispose();
+//   }
+
+//   /// toggle for drawer and icon aniamtion
+//   void toggle() {
+//     setState(() {
+//       isDrawerOpen = !isDrawerOpen;
+//       if (isDrawerOpen) {
+//         controller.forward();
+//         widget.drawerKey?.currentState?.openSlider();
+
+//       } else {
+//         controller.reverse();
+//         widget.drawerKey?.currentState?.closeSlider();
+//       }
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     var base = BaseWidget.of(context).dataStore.box;
+//     return SizedBox(
+//       width: double.infinity,
+//       height: 132,
+//       child: Padding(
+//         padding: const EdgeInsets.only(top: 20),
+//         child: Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           crossAxisAlignment: CrossAxisAlignment.center,
+//           children: [
+//             /// Animated Icon - Menu & Close
+//             Padding(
+//               padding: const EdgeInsets.only(left: 20),
+//               child: IconButton(
+//                   splashColor: Colors.transparent,
+//                   highlightColor: Colors.transparent,
+//                   icon: AnimatedIcon(
+//                     icon: AnimatedIcons.menu_close,
+//                     progress: controller,
+//                     size: 40,
+//                   ),
+//                   onPressed: toggle),
+//             ),
+
+//             /// Delete Icon
+//             Padding(
+//               padding: const EdgeInsets.only(right: 20),
+//               child: GestureDetector(
+//                 onTap: () {
+//                   base.isEmpty
+//                       ? warningNoTask(context)
+//                       : deleteAllTask(context);
+//                 },
+//                 child: const Icon(
+//                   CupertinoIcons.trash,
+//                   size: 40,
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 /// Floating Action Button
 class FAB extends StatelessWidget {
